@@ -19,12 +19,14 @@ class DrawingVC: UIViewController {
     private var toolPicker = PKToolPicker()
     private let drawing = PKDrawing()
     
+    private var countdownTimer: Timer?
+    private var secondsLeft = 30
+    
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(canvasView)
-        setupCanvasView()
-        setupBarButtons()
+        setupUI()
     }
     
     override func viewDidLayoutSubviews() {
@@ -38,6 +40,75 @@ class DrawingVC: UIViewController {
         toolPicker.setVisible(true, forFirstResponder: canvasView)
         toolPicker.addObserver(canvasView)
         canvasView.becomeFirstResponder()
+        
+        Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
+            self?.startCountdown()
+        }
+    }
+    
+    // MARK: — Countdown via Timer
+    private func startCountdown() {
+        secondsLeft = 30
+        showToast("30 seconds remaining", duration: 2.0)
+        print(secondsLeft)
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self = self else { return }
+            self.secondsLeft -= 1
+
+            switch self.secondsLeft {
+            case 10:
+                self.showToast("10 seconds remaining", duration: 2.0)
+                print(secondsLeft)
+
+            case 3, 2, 1:
+                self.showToast("\(self.secondsLeft)", duration: 0.5)
+                print(secondsLeft)
+            case 0:
+                timer.invalidate()
+                self.canvasView.isUserInteractionEnabled = false
+                self.navigationController?.navigationBar.isUserInteractionEnabled = false
+                self.saveTapped()
+            default:
+                break
+            }
+        }
+    }
+    
+    // MARK: — Custom Toast
+    private func showToast(_ message: String, duration: TimeInterval) {
+        let label = UILabel()
+        label.text = message
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .white
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        label.numberOfLines = 0
+        label.layer.cornerRadius = 8
+        label.layer.masksToBounds = true
+        label.alpha = 0
+
+        let maxWidth = view.bounds.width - 40
+        let textSize = label.sizeThatFits(CGSize(width: maxWidth - 20, height: .greatestFiniteMagnitude))
+        let width = min(maxWidth, textSize.width + 20)
+        let height = textSize.height + 12
+        label.frame = CGRect(
+            x: (view.bounds.width - width) / 2,
+            y: view.safeAreaInsets.top + 10,
+            width: width,
+            height: height
+        )
+
+        view.addSubview(label)
+
+        UIView.animate(withDuration: 0.3, animations: {
+            label.alpha = 1
+        }) { _ in
+            UIView.animate(withDuration: 0.3, delay: duration, options: [], animations: {
+                label.alpha = 0
+            }) { _ in
+                label.removeFromSuperview()
+            }
+        }
     }
 }
 
@@ -75,7 +146,8 @@ extension DrawingVC {
     }
 
     @objc private func saveTapped() {
-//        let image = canvasView.drawing.image(from: canvasView.bounds, scale: UIScreen.main.scale)
+        let image = canvasView.drawing.image(from: canvasView.bounds, scale: UIScreen.main.scale)
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         print("Image saved")
     }
 }

@@ -19,6 +19,7 @@ class DrawingVC: UIViewController {
     private var toolPicker = PKToolPicker()
     private let drawing = PKDrawing()
     
+    private var currentPlayer = 1
     private var countdownTimer: Timer?
     private var secondsLeft = 30
     
@@ -41,16 +42,34 @@ class DrawingVC: UIViewController {
         toolPicker.addObserver(canvasView)
         canvasView.becomeFirstResponder()
         
+        playRoundSequence()
+    }
+}
+
+extension DrawingVC {
+
+    private func playRoundSequence() {
+        let message = currentPlayer == 1
+            ? "Player 1, get ready!"
+            : "Player 2, get ready!"
+        showToast(message, duration: 2.0)
+
+        if currentPlayer == 2 {
+            canvasView.drawing = PKDrawing()
+        }
+
+        canvasView.isUserInteractionEnabled = true
+        navigationController?.navigationBar.isUserInteractionEnabled = true
+
         Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
             self?.startCountdown()
         }
     }
-    
-    // MARK: — Countdown via Timer
+
     private func startCountdown() {
         secondsLeft = 30
         showToast("30 seconds remaining", duration: 2.0)
-        print(secondsLeft)
+
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { return }
             self.secondsLeft -= 1
@@ -58,24 +77,76 @@ class DrawingVC: UIViewController {
             switch self.secondsLeft {
             case 10:
                 self.showToast("10 seconds remaining", duration: 2.0)
-                print(secondsLeft)
-
             case 3, 2, 1:
                 self.showToast("\(self.secondsLeft)", duration: 0.5)
-                print(secondsLeft)
             case 0:
                 timer.invalidate()
-                self.canvasView.isUserInteractionEnabled = false
                 self.interruptDrawing()
+                self.canvasView.isUserInteractionEnabled = false
                 self.navigationController?.navigationBar.isUserInteractionEnabled = false
                 self.saveTapped()
+
+                if self.currentPlayer < 2 {
+                    self.currentPlayer += 1
+                    self.playRoundSequence()
+                } else {
+                    self.showToast("Game over!", duration: 2.0)
+                }
             default:
                 break
             }
         }
     }
+
+    private func interruptDrawing() {
+        canvasView.drawingGestureRecognizer.isEnabled = false
+        canvasView.drawingGestureRecognizer.isEnabled = true
+    }
+}
+
+
+//MARK: - UI config
+extension DrawingVC {
     
-    // MARK: — Custom Toast
+    private func setupUI() {
+        setupBarButtons()
+        setupCanvasView()
+    }
+    
+    private func setupCanvasView() {
+        canvasView.drawing = drawing
+    }
+
+    private func setupBarButtons() {
+        let eraseButton = UIButton(type: .system)
+        eraseButton.setImage(UIImage(systemName: "eraser.fill"), for: .normal)
+        eraseButton.setTitle(" Erase", for: .normal)
+        eraseButton.sizeToFit()
+        eraseButton.addTarget(self, action: #selector(eraseTapped), for: .touchUpInside)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: eraseButton)
+
+        let saveButton = UIButton(type: .system)
+        saveButton.setImage(UIImage(systemName: "square.and.arrow.down"), for: .normal)
+        saveButton.setTitle(" Save", for: .normal)
+        saveButton.sizeToFit()
+        saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: saveButton)
+    }
+
+    @objc private func eraseTapped() {
+        canvasView.drawing = PKDrawing()
+    }
+
+    @objc private func saveTapped() {
+        let image = canvasView.drawing.image(from: canvasView.bounds, scale: UIScreen.main.scale)
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        print("Image saved")
+    }
+}
+
+//MARK: - Utils
+extension DrawingVC {
+    //Custom Toast
     private func showToast(_ message: String, duration: TimeInterval) {
         let label = UILabel()
         label.text = message
@@ -111,58 +182,4 @@ class DrawingVC: UIViewController {
             }
         }
     }
-    
-    private func interruptDrawing() {
-        canvasView.drawingGestureRecognizer.isEnabled = false
-        canvasView.drawingGestureRecognizer.isEnabled = true
-    }
-}
-
-//MARK: - UI config
-extension DrawingVC {
-    
-    private func setupUI() {
-        setupBarButtons()
-        setupCanvasView()
-    }
-    
-    private func setupCanvasView() {
-        canvasView.drawing = drawing
-        canvasView.delegate = self
-    }
-
-    private func setupBarButtons() {
-        let eraseButton = UIButton(type: .system)
-        eraseButton.setImage(UIImage(systemName: "eraser.fill"), for: .normal)
-        eraseButton.setTitle(" Erase", for: .normal)
-        eraseButton.sizeToFit()
-        eraseButton.addTarget(self, action: #selector(eraseTapped), for: .touchUpInside)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: eraseButton)
-
-        let saveButton = UIButton(type: .system)
-        saveButton.setImage(UIImage(systemName: "square.and.arrow.down"), for: .normal)
-        saveButton.setTitle(" Save", for: .normal)
-        saveButton.sizeToFit()
-        saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: saveButton)
-    }
-
-    @objc private func eraseTapped() {
-        canvasView.drawing = PKDrawing()
-    }
-
-    @objc private func saveTapped() {
-        let image = canvasView.drawing.image(from: canvasView.bounds, scale: UIScreen.main.scale)
-        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-        print("Image saved")
-    }
-}
-
-//MARK: - PKCanvasViewDelegate
-extension DrawingVC: PKCanvasViewDelegate {
-    // MARK: — PKCanvasViewDelegate stubs
-    func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) { }
-    func canvasViewDidFinishRendering(_ canvasView: PKCanvasView) { }
-    func canvasViewDidEndUsingTool(_ canvasView: PKCanvasView) { }
-    func canvasViewDidBeginUsingTool(_ canvasView: PKCanvasView) { }
 }

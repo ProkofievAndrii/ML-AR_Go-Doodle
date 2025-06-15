@@ -66,6 +66,7 @@ class DrawingVC: UIViewController {
             case 0:
                 timer.invalidate()
                 self.canvasView.isUserInteractionEnabled = false
+                self.interruptDrawing()
                 self.navigationController?.navigationBar.isUserInteractionEnabled = false
                 self.saveTapped()
             default:
@@ -109,6 +110,11 @@ class DrawingVC: UIViewController {
                 label.removeFromSuperview()
             }
         }
+    }
+    
+    private func interruptDrawing() {
+        canvasView.drawingGestureRecognizer.isEnabled = false
+        canvasView.drawingGestureRecognizer.isEnabled = true
     }
 }
 

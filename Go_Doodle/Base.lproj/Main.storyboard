@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="6CY-kg-4Ka">
-    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <device id="retina6_12" orientation="portrait" appearance="dark"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -23,6 +23,64 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XvC-1P-7mQ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1583.9694656488548" y="-17.605633802816904"/>
+        </scene>
+        <!--ResultsVC-->
+        <scene sceneID="Uib-Pr-yLZ">
+            <objects>
+                <viewController storyboardIdentifier="resultsVC" id="fgo-Br-ZBn" customClass="ResultsVC" customModule="Go_Doodle" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="eTX-rf-7Qn">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="bdh-8c-u78">
+                                <rect key="frame" x="68.666666666666686" y="144.66666666666669" width="256" height="612.66666666666652"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Uav-wR-Rpu">
+                                        <rect key="frame" x="0.0" y="0.0" width="256" height="256"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="256" id="eZI-8c-XWt"/>
+                                            <constraint firstAttribute="width" constant="256" id="md7-sv-Vt8"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Evaluated score: Lorem" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="srl-lL-0Ry">
+                                        <rect key="frame" x="0.0" y="276" width="256" height="20.333333333333314"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xgO-Ka-vWo">
+                                        <rect key="frame" x="0.0" y="316.33333333333337" width="256" height="256"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="256" id="PKF-8z-0de"/>
+                                            <constraint firstAttribute="width" constant="256" id="kpb-4q-im4"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Evaluated score: Lorem" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vdU-p8-4x1">
+                                        <rect key="frame" x="0.0" y="592.33333333333337" width="256" height="20.333333333333371"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="YYQ-yP-FsS"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="bdh-8c-u78" firstAttribute="centerX" secondItem="YYQ-yP-FsS" secondAttribute="centerX" id="QxD-p6-ZFx"/>
+                            <constraint firstItem="bdh-8c-u78" firstAttribute="centerY" secondItem="YYQ-yP-FsS" secondAttribute="centerY" id="t7u-ue-ulJ"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="player1ImageView" destination="Uav-wR-Rpu" id="uoZ-JZ-fxW"/>
+                        <outlet property="player1ScoreLabel" destination="srl-lL-0Ry" id="OPM-Ck-nb2"/>
+                        <outlet property="player2ImageView" destination="xgO-Ka-vWo" id="ihB-K2-hGb"/>
+                        <outlet property="player2ScoreLabel" destination="vdU-p8-4x1" id="bJX-6O-FX8"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gJ0-iK-8mW" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2360" y="-18"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="YLt-qC-Wvq">

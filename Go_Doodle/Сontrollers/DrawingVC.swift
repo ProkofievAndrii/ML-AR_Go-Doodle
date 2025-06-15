@@ -10,7 +10,7 @@ import PencilKit
 
 class DrawingVC: UIViewController {
     
-    // MARK: UI instances & variables
+    // MARK: UI instances
     private let canvasView: PKCanvasView = {
         let canvas = PKCanvasView()
         canvas.drawingPolicy = .anyInput
@@ -30,11 +30,15 @@ class DrawingVC: UIViewController {
     }()
     private lazy var viewResultsBarItem = UIBarButtonItem(customView: viewResultsButton)
     
+    //MARK: Varibles
     private var currentPlayer = 1
     private var countdownTimer: Timer?
     private var secondsLeft = 30
     
-    // MARK: Lifecycle
+    private var player1ImageURL: URL?
+    private var player2ImageURL: URL?
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(canvasView)
@@ -57,6 +61,7 @@ class DrawingVC: UIViewController {
     }
 }
 
+//MARK: - Round sequence
 extension DrawingVC {
 
     private func playRoundSequence() {
@@ -146,16 +151,49 @@ extension DrawingVC {
     }
     
     @objc private func viewResultsTapped() {
-        let resultsVC = UIViewController()
-        resultsVC.view.backgroundColor = .systemBackground
-        resultsVC.title = "Results"
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let resultsVC = storyboard.instantiateViewController(
+                withIdentifier: "resultsVC"
+            ) as? ResultsVC else {
+            fatalError("ResultsVC not found in Main.storyboard")
+        }
+        resultsVC.player1ImageURL = player1ImageURL
+        resultsVC.player2ImageURL = player2ImageURL
         navigationController?.setViewControllers([resultsVC], animated: true)
     }
     
-    @objc private func saveImage() {
+    private func saveImage() {
+        saveImageToGallery()
+        let image = canvasView.drawing.image(from: canvasView.bounds,
+                                             scale: UIScreen.main.scale)
+        
+//        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        if let url = saveImageLocally(image, forPlayer: currentPlayer) {
+            if currentPlayer == 1 {
+                player1ImageURL = url
+            } else {
+                player2ImageURL = url
+            }
+        }
+    }
+    
+    private func saveImageToGallery() {
         let image = canvasView.drawing.image(from: canvasView.bounds, scale: UIScreen.main.scale)
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-        print("Image saved")
+    }
+    
+    private func saveImageLocally(_ image: UIImage, forPlayer player: Int) -> URL? {
+        guard let data = image.pngData() else { return nil }
+        let docs = FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let fileURL = docs.appendingPathComponent("player\(player)_drawing.png")
+        do {
+            try data.write(to: fileURL, options: .atomic)
+            return fileURL
+        } catch {
+            print("Error saving image for player \(player):", error)
+            return nil
+        }
     }
 }
 

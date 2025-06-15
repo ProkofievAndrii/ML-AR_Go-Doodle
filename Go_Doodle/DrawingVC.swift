@@ -19,6 +19,17 @@ class DrawingVC: UIViewController {
     private var toolPicker = PKToolPicker()
     private let drawing = PKDrawing()
     
+    private lazy var viewResultsButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "list.bullet.rectangle"), for: .normal)
+        btn.setTitle("Results", for: .normal)
+        btn.sizeToFit()
+        btn.addTarget(self, action: #selector(viewResultsTapped), for: .touchUpInside)
+        btn.isHidden = true
+        return btn
+    }()
+    private lazy var viewResultsBarItem = UIBarButtonItem(customView: viewResultsButton)
+    
     private var currentPlayer = 1
     private var countdownTimer: Timer?
     private var secondsLeft = 30
@@ -84,13 +95,15 @@ extension DrawingVC {
                 self.interruptDrawing()
                 self.canvasView.isUserInteractionEnabled = false
                 self.navigationController?.navigationBar.isUserInteractionEnabled = false
-                self.saveTapped()
+                self.saveImage()
 
                 if self.currentPlayer < 2 {
                     self.currentPlayer += 1
                     self.playRoundSequence()
                 } else {
                     self.showToast("Game over!", duration: 2.0)
+                    navigationController?.navigationBar.isUserInteractionEnabled = true
+                    viewResultsButton.isHidden = false
                 }
             default:
                 break
@@ -125,19 +138,21 @@ extension DrawingVC {
         eraseButton.addTarget(self, action: #selector(eraseTapped), for: .touchUpInside)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: eraseButton)
 
-        let saveButton = UIButton(type: .system)
-        saveButton.setImage(UIImage(systemName: "square.and.arrow.down"), for: .normal)
-        saveButton.setTitle(" Save", for: .normal)
-        saveButton.sizeToFit()
-        saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: saveButton)
+        navigationItem.rightBarButtonItem = viewResultsBarItem
     }
 
     @objc private func eraseTapped() {
         canvasView.drawing = PKDrawing()
     }
-
-    @objc private func saveTapped() {
+    
+    @objc private func viewResultsTapped() {
+        let resultsVC = UIViewController()
+        resultsVC.view.backgroundColor = .systemBackground
+        resultsVC.title = "Results"
+        navigationController?.setViewControllers([resultsVC], animated: true)
+    }
+    
+    @objc private func saveImage() {
         let image = canvasView.drawing.image(from: canvasView.bounds, scale: UIScreen.main.scale)
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         print("Image saved")

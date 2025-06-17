@@ -7,8 +7,13 @@
 
 import UIKit
 import PencilKit
+import Combine
+import StableDiffusion
 
 class DrawingVC: UIViewController {
+    
+    private let diffuser: ImageDiffuser = ImageDiffuser()
+    private var cancellables: Set<AnyCancellable> = []
     
     // MARK: UI instances
     private let canvasView: PKCanvasView = {
@@ -26,6 +31,7 @@ class DrawingVC: UIViewController {
         btn.sizeToFit()
         btn.addTarget(self, action: #selector(viewResultsTapped), for: .touchUpInside)
         btn.isHidden = true
+        btn.isEnabled = false
         return btn
     }()
     private lazy var viewResultsBarItem = UIBarButtonItem(customView: viewResultsButton)
@@ -43,6 +49,27 @@ class DrawingVC: UIViewController {
         super.viewDidLoad()
         view.addSubview(canvasView)
         setupUI()
+        
+        diffuser.$outputs
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] outputs in
+                guard let fst = outputs[1],
+                      let snd = outputs[2],
+                      case .finished(let image1) = fst,
+                      case .finished(let image2) = snd
+                else { return }
+                
+                //TODO: Replace with image comparison instead of replacement. Image replacement is used for debugging.
+                if let url1 = self?.saveImageLocally(image1, forPlayer: 1),
+                   let url2 = self?.saveImageLocally(image2, forPlayer: 2)
+                {
+                    self?.player1ImageURL = url1
+                    self?.player2ImageURL = url2
+                    self?.viewResultsButton.isEnabled = true
+                }
+            }
+            .store(in: &cancellables)
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -63,33 +90,33 @@ class DrawingVC: UIViewController {
 
 //MARK: - Round sequence
 extension DrawingVC {
-
+    
     private func playRoundSequence() {
         let message = currentPlayer == 1
-            ? "Player 1, get ready!"
-            : "Player 2, get ready!"
+        ? "Player 1, get ready!"
+        : "Player 2, get ready!"
         showToast(message, duration: 2.0)
-
+        
         if currentPlayer == 2 {
             canvasView.drawing = PKDrawing()
         }
-
+        
         canvasView.isUserInteractionEnabled = true
         navigationController?.navigationBar.isUserInteractionEnabled = true
-
+        
         Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
             self?.startCountdown()
         }
     }
-
+    
     private func startCountdown() {
         secondsLeft = 30
         showToast("30 seconds remaining", duration: 2.0)
-
+        
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { return }
             self.secondsLeft -= 1
-
+            
             switch self.secondsLeft {
             case 10:
                 self.showToast("10 seconds remaining", duration: 2.0)
@@ -101,7 +128,7 @@ extension DrawingVC {
                 self.canvasView.isUserInteractionEnabled = false
                 self.navigationController?.navigationBar.isUserInteractionEnabled = false
                 self.saveImage()
-
+                
                 if self.currentPlayer < 2 {
                     self.currentPlayer += 1
                     self.playRoundSequence()
@@ -115,7 +142,7 @@ extension DrawingVC {
             }
         }
     }
-
+    
     private func interruptDrawing() {
         canvasView.drawingGestureRecognizer.isEnabled = false
         canvasView.drawingGestureRecognizer.isEnabled = true
@@ -134,7 +161,7 @@ extension DrawingVC {
     private func setupCanvasView() {
         canvasView.drawing = drawing
     }
-
+    
     private func setupBarButtons() {
         let eraseButton = UIButton(type: .system)
         eraseButton.setImage(UIImage(systemName: "eraser.fill"), for: .normal)
@@ -142,10 +169,10 @@ extension DrawingVC {
         eraseButton.sizeToFit()
         eraseButton.addTarget(self, action: #selector(eraseTapped), for: .touchUpInside)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: eraseButton)
-
+        
         navigationItem.rightBarButtonItem = viewResultsBarItem
     }
-
+    
     @objc private func eraseTapped() {
         canvasView.drawing = PKDrawing()
     }
@@ -153,8 +180,8 @@ extension DrawingVC {
     @objc private func viewResultsTapped() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let resultsVC = storyboard.instantiateViewController(
-                withIdentifier: "resultsVC"
-            ) as? ResultsVC else {
+            withIdentifier: "resultsVC"
+        ) as? ResultsVC else {
             fatalError("ResultsVC not found in Main.storyboard")
         }
         resultsVC.player1ImageURL = player1ImageURL
@@ -165,9 +192,10 @@ extension DrawingVC {
     private func saveImage() {
         saveImageToGallery()
         let image = canvasView.drawing.image(from: canvasView.bounds,
-                                             scale: UIScreen.main.scale)
+                                             scale: UIScreen.main.scale).resizedToPixels(width: 512, height: 512)
         
-//        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        diffuser.diffuseImage(input: image, index: currentPlayer)
+        //        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
         if let url = saveImageLocally(image, forPlayer: currentPlayer) {
             if currentPlayer == 1 {
                 player1ImageURL = url
@@ -178,7 +206,7 @@ extension DrawingVC {
     }
     
     private func saveImageToGallery() {
-        let image = canvasView.drawing.image(from: canvasView.bounds, scale: UIScreen.main.scale)
+        let image = canvasView.drawing.image(from: canvasView.bounds, scale: UIScreen.main.scale).resizedToPixels(width: 512, height: 512)
         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
     }
     
@@ -211,7 +239,7 @@ extension DrawingVC {
         label.layer.cornerRadius = 8
         label.layer.masksToBounds = true
         label.alpha = 0
-
+        
         let maxWidth = view.bounds.width - 40
         let textSize = label.sizeThatFits(CGSize(width: maxWidth - 20, height: .greatestFiniteMagnitude))
         let width = min(maxWidth, textSize.width + 20)
@@ -222,9 +250,9 @@ extension DrawingVC {
             width: width,
             height: height
         )
-
+        
         view.addSubview(label)
-
+        
         UIView.animate(withDuration: 0.3, animations: {
             label.alpha = 1
         }) { _ in

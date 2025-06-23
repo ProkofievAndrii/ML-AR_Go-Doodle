@@ -11,8 +11,12 @@ import CoreML
 
 class ResultsVC: UIViewController {
 
-    @IBOutlet private weak var player1ImageView: UIImageView!
-    @IBOutlet private weak var player2ImageView: UIImageView!
+    @IBOutlet private weak var player1InitialImageView: UIImageView!
+    @IBOutlet private weak var player1AugmentedImageView: UIImageView!
+    @IBOutlet private weak var player1ProgressView: UIProgressView!
+    @IBOutlet private weak var player2InitialImageView: UIImageView!
+    @IBOutlet private weak var player2AugmentedImageView: UIImageView!
+    @IBOutlet private weak var player2ProgressView: UIProgressView!
     @IBOutlet private weak var player1ScoreLabel: UILabel!
     @IBOutlet private weak var player2ScoreLabel: UILabel!
     @IBOutlet private weak var versusLabel: UILabel!
@@ -23,11 +27,11 @@ class ResultsVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let url1 = player1ImageURL {
-            player1ImageView.image = UIImage(contentsOfFile: url1.path)
+            player1InitialImageView.image = UIImage(contentsOfFile: url1.path)
         }
         
         if let url2 = player2ImageURL {
-            player2ImageView.image = UIImage(contentsOfFile: url2.path)
+            player2InitialImageView.image = UIImage(contentsOfFile: url2.path)
         }
         
         player1ScoreLabel.text = "Calculating..."
@@ -46,9 +50,11 @@ class ResultsVC: UIViewController {
             else { return }
 
             let text = String(format: "%.3f", dist)
-            DispatchQueue.main.async {
-                self.animateSequence(with: text)
-            }
+//            DispatchQueue.main.async {
+//                self.animateSequence(with: text)
+//            }
+            player1ScoreLabel.text = text
+            player2ScoreLabel.text = text
         }
     }
 }

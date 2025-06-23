@@ -138,54 +138,89 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="bdh-8c-u78">
-                                <rect key="frame" x="68.666666666666686" y="124.66666666666669" width="256" height="653"/>
+                                <rect key="frame" x="15" y="133" width="363" height="704"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Uav-wR-Rpu">
-                                        <rect key="frame" x="0.0" y="0.0" width="256" height="256"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="256" id="eZI-8c-XWt"/>
-                                            <constraint firstAttribute="width" constant="256" id="md7-sv-Vt8"/>
-                                        </constraints>
-                                    </imageView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="3tM-E7-5GR">
+                                        <rect key="frame" x="0.0" y="0.0" width="363" height="363"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="wKn-9E-R7r">
+                                                <rect key="frame" x="0.0" y="0.0" width="179" height="363"/>
+                                                <subviews>
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Uav-wR-Rpu">
+                                                        <rect key="frame" x="0.0" y="0.0" width="179" height="179"/>
+                                                    </imageView>
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="imN-UD-wJe">
+                                                        <rect key="frame" x="0.0" y="184" width="179" height="179"/>
+                                                    </imageView>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="H7V-6K-zdd">
+                                                <rect key="frame" x="184" y="0.0" width="179" height="363"/>
+                                                <subviews>
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xgO-Ka-vWo">
+                                                        <rect key="frame" x="0.0" y="0.0" width="179" height="179"/>
+                                                    </imageView>
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wgN-at-y1b">
+                                                        <rect key="frame" x="0.0" y="184" width="179" height="179"/>
+                                                    </imageView>
+                                                </subviews>
+                                            </stackView>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="KVs-Vk-vQm">
+                                        <rect key="frame" x="0.0" y="383" width="363" height="4"/>
+                                        <subviews>
+                                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="QEc-Ih-j6x">
+                                                <rect key="frame" x="0.0" y="0.0" width="174" height="4"/>
+                                            </progressView>
+                                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="B44-RS-UTC">
+                                                <rect key="frame" x="189" y="0.0" width="174" height="4"/>
+                                            </progressView>
+                                        </subviews>
+                                    </stackView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Evaluated score: Lorem" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="srl-lL-0Ry">
-                                        <rect key="frame" x="0.0" y="276" width="256" height="20.333333333333314"/>
+                                        <rect key="frame" x="0.0" y="407" width="363" height="85.666666666666686"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="VS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZaA-O0-n5c">
-                                        <rect key="frame" x="0.0" y="316.33333333333331" width="256" height="20.333333333333314"/>
+                                        <rect key="frame" x="0.0" y="512.66666666666663" width="363" height="85.666666666666629"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Evaluated score: Lorem" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vdU-p8-4x1">
-                                        <rect key="frame" x="0.0" y="356.66666666666663" width="256" height="20.333333333333314"/>
+                                        <rect key="frame" x="0.0" y="618.33333333333337" width="363" height="85.666666666666629"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xgO-Ka-vWo">
-                                        <rect key="frame" x="0.0" y="397" width="256" height="256"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="256" id="PKF-8z-0de"/>
-                                            <constraint firstAttribute="width" constant="256" id="kpb-4q-im4"/>
-                                        </constraints>
-                                    </imageView>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstItem="vdU-p8-4x1" firstAttribute="height" secondItem="srl-lL-0Ry" secondAttribute="height" id="e4i-iJ-VB3"/>
+                                    <constraint firstItem="ZaA-O0-n5c" firstAttribute="height" secondItem="srl-lL-0Ry" secondAttribute="height" id="nIS-DW-LBs"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="YYQ-yP-FsS"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="bdh-8c-u78" firstAttribute="centerX" secondItem="YYQ-yP-FsS" secondAttribute="centerX" id="QxD-p6-ZFx"/>
-                            <constraint firstItem="bdh-8c-u78" firstAttribute="centerY" secondItem="YYQ-yP-FsS" secondAttribute="centerY" id="t7u-ue-ulJ"/>
+                            <constraint firstAttribute="bottom" secondItem="bdh-8c-u78" secondAttribute="bottom" constant="15" id="9YA-mk-REf"/>
+                            <constraint firstItem="bdh-8c-u78" firstAttribute="leading" secondItem="eTX-rf-7Qn" secondAttribute="leading" constant="15" id="G3p-TM-EtC"/>
+                            <constraint firstItem="3tM-E7-5GR" firstAttribute="height" secondItem="eTX-rf-7Qn" secondAttribute="height" multiplier="121:284" id="OtQ-Jc-Rpc"/>
+                            <constraint firstAttribute="trailing" secondItem="bdh-8c-u78" secondAttribute="trailing" constant="15" id="uVe-tX-uLH"/>
+                            <constraint firstItem="bdh-8c-u78" firstAttribute="top" secondItem="YYQ-yP-FsS" secondAttribute="top" constant="15" id="yqT-Sj-dN6"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="player1ImageView" destination="Uav-wR-Rpu" id="uoZ-JZ-fxW"/>
+                        <outlet property="player1AugmentedImageView" destination="imN-UD-wJe" id="dpg-Ny-Cc0"/>
+                        <outlet property="player1InitialImageView" destination="Uav-wR-Rpu" id="uoZ-JZ-fxW"/>
+                        <outlet property="player1ProgressView" destination="QEc-Ih-j6x" id="tGS-p2-ImD"/>
                         <outlet property="player1ScoreLabel" destination="srl-lL-0Ry" id="OPM-Ck-nb2"/>
-                        <outlet property="player2ImageView" destination="xgO-Ka-vWo" id="ihB-K2-hGb"/>
+                        <outlet property="player2AugmentedImageView" destination="wgN-at-y1b" id="Ef8-DZ-hnO"/>
+                        <outlet property="player2InitialImageView" destination="xgO-Ka-vWo" id="ihB-K2-hGb"/>
+                        <outlet property="player2ProgressView" destination="B44-RS-UTC" id="K8t-LP-MAi"/>
                         <outlet property="player2ScoreLabel" destination="vdU-p8-4x1" id="bJX-6O-FX8"/>
                         <outlet property="versusLabel" destination="ZaA-O0-n5c" id="yKA-qy-18x"/>
                     </connections>

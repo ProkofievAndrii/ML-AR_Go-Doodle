@@ -34,7 +34,7 @@ final class SDPipeline {
         }
         
         let config = MLModelConfiguration()
-        config.computeUnits = .cpuAndNeuralEngine
+        config.computeUnits = .cpuOnly
         
         let pipeline = try! StableDiffusionPipeline(
             resourcesAt:    modelsFolder,
@@ -76,8 +76,4 @@ final class SDPipeline {
         }
         
     }
-    
-    
-
-    
 }

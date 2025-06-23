@@ -31,7 +31,7 @@ class DrawingVC: UIViewController {
         btn.sizeToFit()
         btn.addTarget(self, action: #selector(viewResultsTapped), for: .touchUpInside)
         btn.isHidden = true
-        btn.isEnabled = false
+//        btn.isEnabled = false
         return btn
     }()
     private lazy var viewResultsBarItem = UIBarButtonItem(customView: viewResultsButton)
@@ -49,27 +49,6 @@ class DrawingVC: UIViewController {
         super.viewDidLoad()
         view.addSubview(canvasView)
         setupUI()
-        
-        diffuser.$outputs
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] outputs in
-                guard let fst = outputs[1],
-                      let snd = outputs[2],
-                      case .finished(let image1) = fst,
-                      case .finished(let image2) = snd
-                else { return }
-                
-                //TODO: Replace with image comparison instead of replacement. Image replacement is used for debugging.
-                if let url1 = self?.saveImageLocally(image1, forPlayer: 1),
-                   let url2 = self?.saveImageLocally(image2, forPlayer: 2)
-                {
-                    self?.player1ImageURL = url1
-                    self?.player2ImageURL = url2
-                    self?.viewResultsButton.isEnabled = true
-                }
-            }
-            .store(in: &cancellables)
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -186,6 +165,7 @@ extension DrawingVC {
         }
         resultsVC.player1ImageURL = player1ImageURL
         resultsVC.player2ImageURL = player2ImageURL
+        resultsVC.diffuser = self.diffuser
         navigationController?.setViewControllers([resultsVC], animated: true)
     }
     

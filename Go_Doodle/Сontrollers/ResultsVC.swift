@@ -8,6 +8,7 @@
 import UIKit
 import Vision
 import CoreML
+import Combine
 
 class ResultsVC: UIViewController {
 
@@ -20,6 +21,9 @@ class ResultsVC: UIViewController {
     @IBOutlet private weak var player1ScoreLabel: UILabel!
     @IBOutlet private weak var player2ScoreLabel: UILabel!
     @IBOutlet private weak var versusLabel: UILabel!
+    
+    var diffuser: ImageDiffuser? = nil
+    var cancellables: Set<AnyCancellable> = []
     
     var player1ImageURL: URL?
     var player2ImageURL: URL?
@@ -34,27 +38,69 @@ class ResultsVC: UIViewController {
             player2InitialImageView.image = UIImage(contentsOfFile: url2.path)
         }
         
+        diffuser?.$outputs
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] outputs in
+                
+                guard let fst = outputs[1],
+                      let snd = outputs[2]
+                else { return }
+                
+                switch fst {
+                case .progress(let progress):
+                    let step = progress.step
+                    let total = progress.stepCount
+                    let percentage = Float(step) / Float(total)
+                    self?.player1ProgressView.progress = percentage
+                    //TODO: self?.progressBar1 = percentage
+                case .finished(let image):
+                    //TODO: self?.augmentedImage1 = image
+                    self?.player1AugmentedImageView.image = image
+                default: break
+                }
+                
+                switch snd {
+                case .progress(let progress):
+                    let step = progress.step
+                    let total = progress.stepCount
+                    let percentage = Float(step) / Float(total)
+                    self?.player2ProgressView.progress = percentage
+                    //TODO: self?.progressBar1 = percentage
+                case .finished(let image):
+                    //TODO: self?.augmentedImage1 = image
+                    self?.player2AugmentedImageView.image = image
+                    self?.computeAndDisplayDistance()
+                    //TODO: self?.stableDiffusionFinishedWork = true
+                default: break
+                }
+                
+            }
+            .store(in: &cancellables)
+
+        
         player1ScoreLabel.text = "Calculating..."
         player2ScoreLabel.text = "Calculating..."
-        
-        computeAndDisplayDistance()
     }
     
     private func computeAndDisplayDistance() {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard
                 let self = self,
-                let url1 = self.player1ImageURL,
-                let url2 = self.player2ImageURL,
-                let dist = self.compareImages(at: url1, and: url2)
+                let initialUrl1 = self.player1ImageURL,
+                let initialUrl2 = self.player2ImageURL,
+                let augmentedImage1 = player1AugmentedImageView.image,
+                let augmentedImage2 = player2AugmentedImageView.image,
+                let dist1 = self.compareImages(at: initialUrl1, and: augmentedImage1),
+                let dist2 = self.compareImages(at: initialUrl2, and: augmentedImage2)
             else { return }
 
-            let text = String(format: "%.3f", dist)
-//            DispatchQueue.main.async {
+            let text1 = String(format: "%.3f", dist1)
+            let text2 = String(format: "%.3f", dist1)
+            DispatchQueue.main.async {
 //                self.animateSequence(with: text)
-//            }
-            player1ScoreLabel.text = text
-            player2ScoreLabel.text = text
+                self.player1ScoreLabel.text = text1
+                self.player2ScoreLabel.text = text2
+            }
         }
     }
 }
@@ -69,6 +115,13 @@ extension ResultsVC {
             return nil
         }
         return ImageComparisonService.shared.compare2Images(firstImage, secondImage)
+    }
+    
+    private func compareImages(at url: URL, and image: UIImage) -> Float? {
+        guard let firstImage = UIImage(contentsOfFile: url.path) else {
+                return nil
+            }
+        return ImageComparisonService.shared.compare2Images(firstImage, image)
     }
 }
 

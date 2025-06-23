@@ -33,7 +33,7 @@ final class ImageDiffuser {
             print("### STARTED DIFFUSION")
             do {
                 var pcfg = StableDiffusionPipeline.Configuration(prompt: "sketch drawing of a shark")
-                pcfg.stepCount     = 5
+                pcfg.stepCount     = 20
                 pcfg.guidanceScale = 30
                 pcfg.imageCount    = 1
                 pcfg.seed          = .random(in: 0..<UInt32.max)

@@ -56,41 +56,13 @@ class ResultsVC: UIViewController {
 //MARK: - Image comparison utils
 extension ResultsVC {
     private func compareImages(at firstURL: URL, and secondURL: URL) -> Float? {
-        guard let fpo1 = featurePrintObservation(for: firstURL) else { return nil }
-        guard let fpo2 = featurePrintObservation(for: secondURL) else { return nil }
-        
-        var distance: Float = 0
-        do {
-            try fpo1.computeDistance(&distance, to: fpo2)
-            return distance
-        } catch {
-            print("Error computing feature-print distance: \(error)")
+        guard
+            let firstImage = UIImage(contentsOfFile: firstURL.path),
+            let secondImage = UIImage(contentsOfFile: secondURL.path)
+        else {
             return nil
         }
-    }
-    
-    private func featurePrintObservation(for url: URL) -> VNFeaturePrintObservation? {
-        let handler = VNImageRequestHandler(url: url, options: [:])
-        let request = VNGenerateImageFeaturePrintRequest()
-
-        if #available(iOS 17.0, *) {
-            for device in MLComputeDevice.allComputeDevices {
-                if device.description.contains("MLCPUComputeDevice") {
-                    request.setComputeDevice(device, for: .main)
-                    break
-                }
-            }
-        } else {
-            request.usesCPUOnly = true
-        }
-
-        do {
-            try handler.perform([request])
-            return request.results?.first as? VNFeaturePrintObservation
-        } catch {
-            print("Vision error: \(error)")
-            return nil
-        }
+        return ImageComparisonService.shared.compare2Images(firstImage, secondImage)
     }
 }
 

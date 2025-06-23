@@ -22,6 +22,7 @@ class LoginVC: UIViewController {
         setupContinueButton()
         setupTextFieldTargets()
         resetFields()
+        setupTapToDismissKeyboard()
     }
 
     private func resetFields() {
@@ -60,6 +61,16 @@ class LoginVC: UIViewController {
         let t1 = player1NicknameTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty == false
         let t2 = player2NicknameTextField.text?.trimmingCharacters(in: .whitespaces).isEmpty == false
         continueButtonItem.isEnabled = (t1 && t2)
+    }
+
+    private func setupTapToDismissKeyboard() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     @objc private func continueTapped() {

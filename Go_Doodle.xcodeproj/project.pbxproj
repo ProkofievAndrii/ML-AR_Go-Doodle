@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C6D491302E01F0AE001DDF7B /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4912F2E01F0AE001DDF7B /* StableDiffusion */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		C6983ADA2DFDFCED001EAAEF /* Go_Doodle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Go_Doodle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6D491302E01F0AE001DDF7B /* StableDiffusion in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = Go_Doodle;
 			packageProductDependencies = (
+				C6D4912F2E01F0AE001DDF7B /* StableDiffusion */,
 			);
 			productName = Go_Doodle;
 			productReference = C6983ADA2DFDFCED001EAAEF /* Go_Doodle.app */;
@@ -108,6 +114,7 @@
 			mainGroup = C6983AD12DFDFCED001EAAEF;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				C6D4912E2E01F0AE001DDF7B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C6983ADB2DFDFCED001EAAEF /* Products */;
@@ -339,6 +346,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C6D4912E2E01F0AE001DDF7B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/ml-stable-diffusion";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C6D4912F2E01F0AE001DDF7B /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6D4912E2E01F0AE001DDF7B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			productName = StableDiffusion;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C6983AD22DFDFCED001EAAEF /* Project object */;
 }

@@ -38,6 +38,10 @@ class ResultsVC: UIViewController {
             player2InitialImageView.image = UIImage(contentsOfFile: url2.path)
         }
         
+        
+        player1ProgressView.progress = 0
+        player2ProgressView.progress = 0
+        
         diffuser?.$outputs
             .receive(on: DispatchQueue.main)
             .sink { [weak self] outputs in
